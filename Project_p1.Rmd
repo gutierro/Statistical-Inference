@@ -1,0 +1,118 @@
+---
+output: pdf_document
+Author: Roberto Gutierrez
+---
+Statistical Inference Project - Part 1  
+========================================  
+
+
+```{r,echo=FALSE, message=FALSE,warning=FALSE}
+library(ggplot2)
+library(gridExtra)
+
+```
+
+```{r}
+lambda=.2
+
+nosim<-1000
+
+mean<-1/lambda
+
+sd<-1/lambda
+
+set.seed(1234)
+
+data<-rexp(nosim * 40,lambda)
+
+n1<-data.frame(x=data)
+n10<-data.frame(x=apply(matrix(data,nrow =  nosim,ncol = 10),1,mean))
+n20<-data.frame(x=apply(matrix(data,nrow =  nosim,ncol = 20),1,mean))
+n25<-data.frame(x=apply(matrix(data,nrow =  nosim,ncol = 25),1,mean))
+n40<-data.frame(x=apply(matrix(data,nrow =  nosim,ncol = 40),1,mean))
+```
+
+
+The exponential density is strongly skewed, we need a large value of n before we see the bell curve emerge.
+
+```{r,message=FALSE,warning=FALSE,fig.height=4, fig.width=4}
+ggplot(n1,aes(x = x)) +
+        geom_histogram(binwidth=diff(range(data))/50,fill="red",colour = "black", 
+                       aes(y = ..density..)) +
+        stat_density(geom = "line",adjust=5)
+```
+
+
+* 1. Show the sample mean and compare it to the theoretical mean of the distribution.  
+Both almost the same as we knew for the LLN theorem.
+
+```{r}
+#Sample mean
+mean(n40$x)
+#Theoretical mean of the distribution
+mean
+```
+
+
+* 2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+For the CLT theorem we knew that Standar deviation of the sample Sx~sd/sqrt(n).
+
+```{r}
+#Standar deviation of the sample
+sd(n10$x)
+#The theoretical standard deviation of the distribution
+sd/sqrt(10)
+```
+
+
+------
+
+* 3. Show that the distribution is approximately normal.  
+
+The larger is n the more the closer the exponetial distribution approximate to the normal.
+I have use the $stat_density$ function that stimates the density of the sample so viasually it is easier to see how the shape
+is moving to a normal distribution.
+
+```{r ,fig.height=12, fig.width=12 , message=FALSE,warning=FALSE}
+g1 <- ggplot(n10, aes(x = x)) + 
+        geom_histogram(binwidth=diff(range(n10$x))/50,
+                       fill="red",colour = "black", aes(y = ..density..)) +
+        stat_function(fun=dnorm, arg = list(mean=mean(n10$x)),aes(colour = "Normal")) +
+        stat_density(geom = "line",adjust=5, aes(colour = "Sample")) +
+        scale_colour_manual("",values = c("green","black")) +
+        ggtitle("Averages of 10 samples")
+
+g2 <- ggplot(n20, aes(x = x)) + 
+        geom_histogram(binwidth=diff(range(n20$x))/50,
+                        fill="red",colour = "black", aes(y = ..density..)) +
+        stat_function(fun=dnorm, arg = list(mean=mean(n20$x)),aes(colour = "Normal")) +
+        stat_density(geom = "line",adjust=5, aes(colour = "Sample")) +
+        scale_colour_manual("",values = c("green","black")) +
+        ggtitle("Averages of 20 samples")
+
+g3 <- ggplot(n25, aes(x = x)) + 
+        geom_histogram(binwidth=diff(range(n25$x))/50,
+                        fill="red",colour = "black", aes(y = ..density..)) +
+        stat_function(fun=dnorm, arg = list(mean=mean(n25$x)),aes(colour = "Normal")) +
+        stat_density(geom = "line",adjust=5, aes(colour = "Sample")) +
+        scale_colour_manual("",values = c("green","black")) +
+        ggtitle("Averages of 25 samples")
+
+g4 <- ggplot(n40, aes(x = x)) +
+        geom_histogram(binwidth=diff(range(n40$x))/50,
+                        fill="red",colour = "black", aes(y = ..density..)) +
+        stat_function(fun=dnorm, arg = list(mean=mean(n40$x)),aes(colour = "Normal")) +
+        stat_density(geom = "line",adjust=5, aes(colour = "Sample")) +
+        scale_colour_manual("",values = c("green","black")) +
+        ggtitle("Averages of 40 samples")
+
+grid.arrange(g1, g2, g3,g4, ncol = 2, nrow=2)
+
+```
+
+
+
+
+
+
+
