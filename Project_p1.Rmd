@@ -56,12 +56,13 @@ mean
 
 * 2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
 For the CLT theorem we knew that Standar deviation of the sample Sx~sd/sqrt(n).
+As we will see in the graph the distribution is approximately normal but not completely.
 
 ```{r}
 #Standar deviation of the sample
-sd(n10$x)
+sd(n40$x)
 #The theoretical standard deviation of the distribution
-sd/sqrt(10)
+sd/sqrt(40)
 ```
 
 
